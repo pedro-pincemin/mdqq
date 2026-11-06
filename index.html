@@ -187,7 +187,7 @@ function del(list,id){S[list]=S[list].filter(function(x){return x.id!==id});send
 function pull(){
  if(!API_URL){$('#sync').textContent='Modo local';return Promise.resolve()}
  if(busy)return Promise.resolve();
- return fetch(API_URL).then(function(r){return r.json()}).then(function(a){if(busy)return;S=fromRecs(a);persist();$('#sync').textContent='Sincronizado';render()})
+ return fetch(API_URL).then(function(r){return r.json()}).then(function(a){if(busy)return;S=fromRecs(a);persist();$('#sync').textContent='Sincronizado';render();if(me&&!person(me)){me=null;localStorage.removeItem(ME);who()}})
   .catch(function(){$('#sync').textContent='Sin conexión'});
 }
 
@@ -250,7 +250,7 @@ function render(){
  $('#pN').textContent='Total pagado '+money(c.spent);
  $('#paid').innerHTML=S.people.length?S.people.map(function(pp){var ys=S.pays.filter(function(y){return y.by===pp.id}).sort(function(a,b){return b.ts-a.ts}),tot=c.paidBy[pp.id]||0,op=open['p'+pp.id];
   return'<li class="cat"><button class="cat-h" style="grid-template-columns:34px minmax(0,1fr) auto" data-a="togp" data-id="'+pp.id+'">'+avatar(pp,'s')+'<span class="nm">'+esc(pp.name)+'<small>Le corresponde '+money(c.share)+' del total</small></span><span class="amt">'+money(tot)+'</span></button>'+
-   (op?'<div class="det">'+(ys.length?ys.map(function(y){var ct=S.cats.filter(function(k){return k.id===y.cat})[0];return'<div class="pay" style="grid-template-columns:minmax(0,1fr) auto"><span class="nm">'+esc(ct?ct.name:'Sin categoría')+'<small>'+esc(y.note||'')+' '+new Date(y.ts).toLocaleDateString('es-AR',{day:'numeric',month:'short'})+'</small></span><span class="amt">'+money(y.amt)+'</span></div>'}).join(''):'<p class="sub">Todavía no registró pagos.</p>')+'</div>':'')+'</li>'}).join(''):'<li class="empty">Todavía no hay participantes.</li>';
+   (op?'<div class="det">'+(ys.length?ys.map(function(y){var ct=S.cats.filter(function(k){return k.id===y.cat})[0];return'<div class="pay" style="grid-template-columns:minmax(0,1fr) auto"><span class="nm">'+esc(ct?ct.name:'Sin categoría')+'<small>'+esc(y.note||'')+' '+new Date(y.ts).toLocaleDateString('es-AR',{day:'numeric',month:'short'})+'</small></span><span class="amt">'+money(y.amt)+'</span></div>'}).join(''):'<p class="sub">Todavía no registró pagos.</p>')+'<div class="bt"><button class="link d" data-a="dpe" data-id="'+pp.id+'">Eliminar usuario</button></div></div>':'')+'</li>'}).join(''):'<li class="empty">Todavía no hay participantes.</li>';
 }
 
 // ---------- Modales ----------
@@ -291,6 +291,9 @@ document.addEventListener('click',function(e){var t=e.target.closest('[data-a]')
  else if(a==='dp'){if(confirm('¿Eliminar este pago?'))del('pays',id)}
  else if(a==='ec')catForm(S.cats.filter(function(x){return x.id===id})[0]);
  else if(a==='dc'){if(confirm('¿Eliminar la categoría y sus pagos?')){S.pays.filter(function(x){return x.cat===id}).forEach(function(x){del('pays',x.id)});del('cats',id)}}
+ else if(a==='dpe'){var pe=person(id),py=S.pays.filter(function(x){return x.by===id}),tt=py.reduce(function(a,x){return a+x.amt},0);
+  if(confirm('¿Eliminar a '+pe.name+'?'+(py.length?' Se borrarán también sus '+py.length+(py.length===1?' pago registrado':' pagos registrados')+' ('+money(tt)+'), y las deudas se recalculan.':''))){
+   py.forEach(function(x){del('pays',x.id)});del('people',id);if(id===me){me=null;localStorage.removeItem(ME);who()}}}
  else if(a==='close')closeM();
  else if(a==='pick'){me=id;localStorage.setItem(ME,me);closeM();render()}
  else if(a==='newme'){var n=$('#wN').value.trim();if(!n){$('#wE').textContent='Escribí un nombre.';return}
