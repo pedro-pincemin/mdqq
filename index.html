@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#e2e2df">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MDQ">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="imgs/icon-180.png">
@@ -14,7 +16,8 @@
 :root{color-scheme:light;--ember:#fc5000;--plasma:#524ae9;--sulfur:#f5f28e;--lime:#f7f6f2;--pumice:#e2e2df;--ink:#070607;--mute:#6f6e6a;--fd:'Bebas Neue','Anton','Arial Narrow',Impact,sans-serif;--fb:'DM Sans','Inter','Segoe UI',system-ui,sans-serif}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
-html{height:100%}
+html{height:100%;touch-action:manipulation;-webkit-text-size-adjust:100%}
+body,button,input,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 body{margin:0;min-height:100%;background:var(--pumice);color:var(--ink);font:500 16px/1.45 var(--fb);-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0)}
 .bg{display:none}
 .app{max-width:480px;margin:0 auto;padding:16px 16px 150px}
@@ -155,7 +158,7 @@ input:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid 
 (function(){
 'use strict';
 // ====== CONFIG: pegá acá la URL de tu Apps Script (si queda vacía, funciona solo en este dispositivo) ======
-var API_URL = 'https://script.google.com/macros/s/AKfycbxS9ZTjtyzINoQTgaAD6WYaVX8mExkCFkk-ZXo6gm8BmjZ_Z1YC4krF919AELyyCUiV/exec';
+var API_URL = '';
 // =========================================================================================================
 var $=function(s,r){return(r||document).querySelector(s)};
 var LS='gg-data-v1', ME='gg-me';
